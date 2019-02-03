@@ -1,6 +1,8 @@
-# Photo sender
+# People checker
 
-Photo sender is a Python app for photographing and sending the photo in VK using API VK.
+People checker is a Python app consists of 2 modules:
+ - Photo -- module for photographing and sending the photo in the infinite loop to VK using API VK.
+ - Video -- module for detection people on the video
 
 ## Installation
 
@@ -15,4 +17,4 @@ pip install -r requirements.txt
 - [x] Take and send photo to VK 
 - [ ] GUI
 - [ ] The ability to send photo to telegram
-- [ ] Human recognition
+- [x] Human detection
