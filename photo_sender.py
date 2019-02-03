@@ -1,11 +1,11 @@
-import vk_api
 import getpass
-import cv2
-import requests
 import json
 import time
 import os
 import random
+import requests
+import vk_api
+import cv2
 
 
 def main():
@@ -15,6 +15,11 @@ def main():
 
 
 def authorization():
+    """
+    Authorizes user
+
+    :return: VkApiMethod(self) for using methods of API VK
+    """
     login = "+7" + input("Логин-> +7")
     password = getpass.getpass("Пароль-> ")  # Set "Emulate terminal in output console" for PyCharm
 
@@ -29,6 +34,12 @@ def authorization():
 
 
 def take_photo(img_name):
+    """
+    Take photo and save this in 'image' folder
+
+    :param img_name: the image name for saving picture
+    :return: result of saving photo (True or False)
+    """
     cap = cv2.VideoCapture(0)  # Open the default camera
 
     if not cap.isOpened():
@@ -44,6 +55,12 @@ def take_photo(img_name):
 
 
 def send_photo(vk, photo_path):
+    """
+    Send photo to VK user
+
+    :param vk: the VkApiMethod(self) for using methods of API VK
+    :param photo_path: path to the photo for sending
+    """
     photo_name = 0
     target_id = int(input("id пользователя-> "))
 
@@ -72,6 +89,12 @@ def send_photo(vk, photo_path):
 
 
 def start_send_photos(vk, frequency_min):
+    """
+    send photo in the infinite loop
+
+    :param vk: the VkApiMethod(self) for using methods of API VK
+    :param frequency_min: frequency of sending photos (indicated in minutes)
+    """
     while True:
         send_photo(vk, "images/")
         print("Фото отправлено")
