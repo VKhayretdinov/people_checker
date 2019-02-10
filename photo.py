@@ -27,7 +27,7 @@ def take_photo(img_name):
         return False
 
 
-def send_photo(vk, photo_path):
+def get_take_photo(vk, photo_path, user_id):
     """
     Send photo to VK user
 
@@ -35,30 +35,44 @@ def send_photo(vk, photo_path):
     :param photo_path: path to the photo for sending
     """
     photo_name = 0
-    target_id = int(input("id пользователя-> "))
+    target_id = int(user_id)
 
-    if take_photo(photo_name):
+    if "jpg" in photo_path:
         data = vk.photos.getMessagesUploadServer()
 
         upload_url = data["upload_url"]
-        files = {'photo': open(photo_path + str(photo_name) + ".jpg", 'rb')}
+        files = {'photo': open(photo_path, 'rb')}
 
-        response = requests.post(upload_url, files=files)
-        result = json.loads(response.text)
+        send_photo(files, upload_url, vk, target_id)
 
-        upload_result = vk.photos.saveMessagesPhoto(server=result["server"],
-                                                    photo=result["photo"],
-                                                    hash=result["hash"])
+        os.remove(photo_path)
 
-        vk.messages.send(user_id=target_id,
-                         attachment="photo" + str(vk.users.get()[0]["id"]) + "_" + str(upload_result[0]["id"]),
-                         random_id=int(random.randint(1, 999999999)))
+    elif take_photo(photo_name):
+        data = vk.photos.getMessagesUploadServer()
 
-        os.remove(photo_path + str(photo_name) + ".jpg")
+        upload_url = data["upload_url"]
+        files = {'photo': open("images/" + str(0) + ".jpg", 'rb')}
+        send_photo(files, upload_url, vk, target_id)
+
     else:
         vk.messages.send(user_id=target_id,
                          message="Problems getting photos from the camera. Check the device please.",
                          random_id=int(random.randint(11111111, 999999999)))
+
+
+def send_photo(files, upload_url, vk, target_id):
+    response = requests.post(upload_url, files=files)
+    result = json.loads(response.text)
+
+    upload_result = vk.photos.saveMessagesPhoto(server=result["server"],
+                                                photo=result["photo"],
+                                                hash=result["hash"])
+
+    vk.messages.send(user_id=target_id,
+                     attachment="photo" + str(vk.users.get()[0]["id"]) + "_" + str(upload_result[0]["id"]),
+                     random_id=int(random.randint(1, 999999999)))
+
+    print("Фото отправлено")
 
 
 def start_send_photos(vk, frequency_min):
@@ -70,6 +84,5 @@ def start_send_photos(vk, frequency_min):
     """
     while True:
         send_photo(vk, "images/")
-        print("Фото отправлено")
         time.sleep(60*int(frequency_min))
 

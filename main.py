@@ -4,11 +4,12 @@ import vk_api
 
 
 def main():
-    # vk = authorization()
+    vk = authorization()
     # sending_frequency = int(input("Как часто присылать фото(в минутах)? -> "))
-    # start_send_photos(vk, sending_frequency)
+    # start_get_take_photo(vk, sending_frequency)
+    user_id = input("ID пользовотеля, которому отправлять фото-> ")
 
-    video.show_video()
+    video.face_detection_dnn(vk, user_id)
 
 
 def authorization():

@@ -6,3 +6,4 @@ pyvenv.cfg
 *.json
 .*
 __pycache__*
+video_test.py

@@ -2,7 +2,7 @@
 
 People checker is a Python app consists of 2 modules:
  - Photo -- module for photographing and sending the photo in the infinite loop to VK using API VK.
- - Video -- module for detection people on the video
+ - Video -- module for detection people on the video and sending photo when a person is detected.
 
 ## Installation
 
@@ -18,3 +18,4 @@ pip install -r requirements.txt
 - [ ] GUI
 - [ ] The ability to send photo to telegram
 - [x] Human detection
+- [x] Sending photo when a person is detected
