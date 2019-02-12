@@ -1,15 +1,18 @@
 import getpass
 import video
 import vk_api
+import photo
+import sys
 
 
-def main():
+def main(module):
     vk = authorization()
-    # sending_frequency = int(input("Как часто присылать фото(в минутах)? -> "))
-    # start_get_take_photo(vk, sending_frequency)
-    user_id = input("ID пользовотеля, которому отправлять фото-> ")
-
-    video.face_detection_dnn(vk, user_id)
+    target_id = int(input("ID пользователя, которому отправлять фото-> "))
+    if module == 1:
+        sending_frequency = int(input("Как часто присылать фото(в минутах)? -> "))
+        photo.start_send_photos(vk, target_id, sending_frequency)
+    else:
+        video.face_detection_dnn(vk, target_id)
 
 
 def authorization():
@@ -31,5 +34,28 @@ def authorization():
     return vk_session.get_api()
 
 
+def choose_module():
+    ans = int(input("""
+    Какой модуль запустить? 
+    1 -- отправка фото через определеннный промежуток времени
+    2 -- отправка фото при обнаружении хотя бы одного человека в кадре
+    -> """))
+
+    true_list = [1, 2]
+
+    if ans not in true_list:
+        sys.exit("Ошибка при вводе типа модуля")
+    else:
+        return ans
+
+
 if __name__ == "__main__":
-    main()
+    print("------------------------------------------------------------------------------------------------------"
+          "-----------------")
+    print("ВК может заблокировать аккаунт из-за подозрительной активности, лучше используйте ненужный профиль для "
+          "работы программы")
+    print("------------------------------------------------------------------------------------------------------"
+          "-----------------")
+    module_type = choose_module()
+    main(module_type)
+

@@ -1,8 +1,5 @@
 import cv2
-from threading import Thread
-import asyncio
 import photo
-import time
 
 
 def face_detection_cascade(show_video=True):
@@ -32,13 +29,12 @@ def face_detection_cascade(show_video=True):
     cv2.destroyAllWindows()
 
 
-def face_detection_dnn(vk, user_id):
+def face_detection_dnn(vk, target_id):
     model = cv2.dnn.readNetFromCaffe("caffe/deploy.prototxt", "caffe/mobilenet_iter_73000.caffemodel")
     cap = cv2.VideoCapture(0)
 
     is_sended = False
 
-    print("SHOW VIDEO")
     while True:
         ret, frame = cap.read()
         frame_resized = cv2.resize(frame, (300, 300))  # Resize frame for prediction
@@ -74,9 +70,9 @@ def face_detection_dnn(vk, user_id):
                                   (0, 255, 0), 2)
 
                     if not is_sended:
-                        the_photo = "images/" + str(0) + ".jpg"
-                        cv2.imwrite(the_photo, frame)
-                        photo.get_take_photo(vk, the_photo, user_id)
+                        PHOTO_PATH = "images/ph0.jpg"
+                        cv2.imwrite(PHOTO_PATH, frame)
+                        photo.send_photo(vk, target_id)
                         is_sended = True
                 else:
                     is_sended = False

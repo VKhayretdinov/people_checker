@@ -6,13 +6,15 @@ import requests
 import cv2
 
 
-def take_photo(img_name):
+PHOTO_PATH = "images/ph0"
+
+
+def take_photo():
     """
     Take photo and save this in 'image' folder
 
-    :param img_name: the image name for saving picture
-    :return: result of saving photo (True or False)
     """
+
     cap = cv2.VideoCapture(0)  # Open the default camera
 
     if not cap.isOpened():
@@ -21,46 +23,20 @@ def take_photo(img_name):
     ret, img = cap.read()
 
     if ret and img is not None:
-        cv2.imwrite("images/" + str(img_name) + ".jpg", img)
-        return True
-    else:
-        return False
+        cv2.imwrite(PHOTO_PATH + ".jpg", img)
 
 
-def get_take_photo(vk, photo_path, user_id):
+def send_photo(vk, target_id):
     """
-    Send photo to VK user
+        Send a photo to target
 
-    :param vk: the VkApiMethod(self) for using methods of API VK
-    :param photo_path: path to the photo for sending
+        :param vk: the VkApiMethod(self) for using methods of API VK
+        :param target_id: user's id to send a photo
     """
-    photo_name = 0
-    target_id = int(user_id)
+    data = vk.photos.getMessagesUploadServer()
+    upload_url = data["upload_url"]
+    files = {'photo': open(PHOTO_PATH + ".jpg", 'rb')}
 
-    if "jpg" in photo_path:
-        data = vk.photos.getMessagesUploadServer()
-
-        upload_url = data["upload_url"]
-        files = {'photo': open(photo_path, 'rb')}
-
-        send_photo(files, upload_url, vk, target_id)
-
-        os.remove(photo_path)
-
-    elif take_photo(photo_name):
-        data = vk.photos.getMessagesUploadServer()
-
-        upload_url = data["upload_url"]
-        files = {'photo': open("images/" + str(0) + ".jpg", 'rb')}
-        send_photo(files, upload_url, vk, target_id)
-
-    else:
-        vk.messages.send(user_id=target_id,
-                         message="Problems getting photos from the camera. Check the device please.",
-                         random_id=int(random.randint(11111111, 999999999)))
-
-
-def send_photo(files, upload_url, vk, target_id):
     response = requests.post(upload_url, files=files)
     result = json.loads(response.text)
 
@@ -72,17 +48,21 @@ def send_photo(files, upload_url, vk, target_id):
                      attachment="photo" + str(vk.users.get()[0]["id"]) + "_" + str(upload_result[0]["id"]),
                      random_id=int(random.randint(1, 999999999)))
 
+    os.remove(PHOTO_PATH + ".jpg")
+
     print("Фото отправлено")
 
 
-def start_send_photos(vk, frequency_min):
+def start_send_photos(vk, target_id, frequency_min):
     """
     send photo in the infinite loop
 
     :param vk: the VkApiMethod(self) for using methods of API VK
+    :param target_id: user's id to send a photo
     :param frequency_min: frequency of sending photos (indicated in minutes)
     """
     while True:
-        send_photo(vk, "images/")
+        take_photo()
+        send_photo(vk, target_id)
         time.sleep(60*int(frequency_min))
 
