@@ -29,10 +29,9 @@ def face_detection_cascade(show_video=True):
     cv2.destroyAllWindows()
 
 
-def face_detection_dnn(vk, target_id):
+def face_detection_dnn(vk=None, target_id=None, is_send=True):
     model = cv2.dnn.readNetFromCaffe("caffe/deploy.prototxt", "caffe/mobilenet_iter_73000.caffemodel")
     cap = cv2.VideoCapture(0)
-
     is_sended = False
 
     while True:
@@ -69,11 +68,8 @@ def face_detection_dnn(vk, target_id):
                     cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top),
                                   (0, 255, 0), 2)
 
-                    if not is_sended:
-                        PHOTO_PATH = "images/ph0.jpg"
-                        cv2.imwrite(PHOTO_PATH, frame)
-                        photo.send_photo(vk, target_id)
-                        is_sended = True
+                    if is_send:
+                        is_sended = send_photo(vk, is_sended, frame, target_id)
                 else:
                     is_sended = False
 
@@ -83,3 +79,11 @@ def face_detection_dnn(vk, target_id):
             break
 
 
+def send_photo(vk, is_sended, frame, target_id):
+    if not is_sended:
+        PHOTO_PATH = "images/ph0.jpg"
+        cv2.imwrite(PHOTO_PATH, frame)
+        photo.send_photo(vk, target_id)
+        is_sended = True
+
+    return is_sended

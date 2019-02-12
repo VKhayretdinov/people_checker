@@ -6,13 +6,17 @@ import sys
 
 
 def main(module):
-    vk = authorization()
-    target_id = int(input("ID пользователя, которому отправлять фото-> "))
+    if module == 1 or module == 2:
+        vk = authorization()
+        target_id = int(input("ID пользователя, которому отправлять фото-> "))
+
     if module == 1:
         sending_frequency = int(input("Как часто присылать фото(в минутах)? -> "))
         photo.start_send_photos(vk, target_id, sending_frequency)
-    else:
+    elif module == 2:
         video.face_detection_dnn(vk, target_id)
+    else:
+        video.face_detection_dnn(is_send=False)
 
 
 def authorization():
@@ -39,9 +43,10 @@ def choose_module():
     Какой модуль запустить? 
     1 -- отправка фото через определеннный промежуток времени
     2 -- отправка фото при обнаружении хотя бы одного человека в кадре
+    3 -- просто показать изображение с камеры и распознавать на людей на нем
     -> """))
 
-    true_list = [1, 2]
+    true_list = [1, 2, 3]
 
     if ans not in true_list:
         sys.exit("Ошибка при вводе типа модуля")
